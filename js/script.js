@@ -14,23 +14,30 @@ const Scene = {
 		texture: null,
 		mouse: new THREE.Vector2(),
 		raycaster: new THREE.Raycaster(),
-		animSpeed: null,
-		animPercent: 0.00,
-		text: "DAWIN"
+		animBaseSpeed: null,
+		animBasePercent: 0.00,
+		animPartyStart: false,
+		animPartyMin: false,
+		animPartyMax: false,
+		text1: "DAWIN",
+		text2: "PARTY"
 	},
-	animate: () => {		
+	animate: () => {
 		requestAnimationFrame(Scene.animate);
 		Scene.vars.raycaster.setFromCamera(Scene.vars.mouse, Scene.vars.camera);
 
-		Scene.customAnimation();
+		Scene.customBaseAnimation();
+		Scene.customPartyAnimation();
+
+		
 
 		if (Scene.vars.goldGroup !== undefined) {
-			let intersects = Scene.vars.raycaster.intersectObjects(Scene.vars.goldGroup.children, true);
+			let intersectsGold = Scene.vars.raycaster.intersectObjects(Scene.vars.goldGroup.children, true);
 
-			if (intersects.length > 0) {
-				Scene.vars.animSpeed = 0.05;
+			if (intersectsGold.length > 0) {
+				Scene.vars.animBaseSpeed = 0.05;
 			} else {
-				Scene.vars.animSpeed = -0.05;
+				Scene.vars.animBaseSpeed = -0.05;
 			}
 
 			// let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
@@ -44,55 +51,178 @@ const Scene = {
 			// }
 		}
 
+		if (Scene.vars.silverGroup !== undefined) {
+			let intersectsSilver = Scene.vars.raycaster.intersectObjects(Scene.vars.silverGroup.children, true);
+
+			if (intersectsSilver.length > 0) {
+				console.log("SILVER");
+			} 
+		}
+
+		if (Scene.vars.partyGroup !== undefined) {
+			let intersectsParty = Scene.vars.raycaster.intersectObjects(Scene.vars.partyGroup.children, true);
+
+			if (intersectsParty.length > 0) {
+				Scene.vars.animPartyStart = true;
+
+				// Scene.vars.animPartySpeed = 0.15;
+				// console.log("Party");
+			} else {
+				Scene.vars.animPartyStart = false;
+				Scene.vars.bronzeGroup.children[2].rotation.x = 0;
+				Scene.vars.silverGroup.children[2].rotation.x = 0;
+				Scene.vars.goldGroup.children[2].rotation.z = 0;
+				Scene.vars.animPartyMin = false;
+				Scene.vars.animPartyMax = false;
+			}
+		}
+
+
+
 		Scene.render();
 	},
 	render: () => {
 		Scene.vars.renderer.render(Scene.vars.scene, Scene.vars.camera);
 		Scene.vars.stats.update();
 	},
-	customAnimation: () => {
+	customPartyAnimation: () => {
+		let vars = Scene.vars;
+		let speed = 0.20;
+		let angle = 0.5;
+
+		if (vars.animPartyStart == false) {
+			return;
+		}
+
+		// vars.animPartyPercent = vars.animPartyPercent + vars.animPartySpeed;
+
+		// if (vars.animPartyPercent < 0) {
+		// 	vars.animPartyPercent = 0;
+		// 	return;
+		// }
+		// if (vars.animPartyPercent > 1) {
+		// 	vars.animPartyPercent = 1;
+		// 	return;
+		// }
+
+		if (vars.animPartyStart) {
+			if(!vars.animPartyMin && !vars.animPartyMax) {
+				// console.log("ETAT 1");
+				vars.bronzeGroup.children[2].rotation.x += speed;
+				vars.silverGroup.children[2].rotation.x -= speed;
+				vars.goldGroup.children[2].rotation.z -= speed;
+				if(vars.bronzeGroup.children[2].rotation.x >= angle && vars.silverGroup.children[2].rotation.x <= -angle && vars.goldGroup.children[2].rotation.z <= -angle) {
+					vars.animPartyMax = true;
+				}
+
+
+			} else if(vars.animPartyMin && !vars.animPartyMax) {
+				// console.log("ETAT 2 " + vars.animPartyMin + " / " + vars.animPartyMax);
+				vars.bronzeGroup.children[2].rotation.x += speed;
+				vars.silverGroup.children[2].rotation.x -= speed;
+				vars.goldGroup.children[2].rotation.z -= speed;
+				if(vars.bronzeGroup.children[2].rotation.x >= angle && vars.silverGroup.children[2].rotation.x <= -angle && vars.goldGroup.children[2].rotation.z <= -angle) {
+					vars.animPartyMax = true;
+					vars.animPartyMin = false;
+				}
+			} else if(!vars.animPartyMin && vars.animPartyMax) {
+				// console.log("ETAT 3");
+				vars.bronzeGroup.children[2].rotation.x -= speed;
+				vars.silverGroup.children[2].rotation.x += speed;
+				vars.goldGroup.children[2].rotation.z += speed;
+				if(vars.bronzeGroup.children[2].rotation.x <= -angle && vars.silverGroup.children[2].rotation.x >= angle && vars.goldGroup.children[2].rotation.z >= angle) {
+					vars.animPartyMax = false;
+					vars.animPartyMin = true;
+				}
+			}
+	
+			// if(vars.bronzeGroup.children[2].rotation.x <= 0 && vars.bronzeGroup.children[2].rotation.x > -1) {
+			// 	vars.bronzeGroup.children[2].rotation.x -= 0.15;
+			// } else if(vars.bronzeGroup.children[2].rotation.x > 0 && vars.bronzeGroup.children[2].rotation.x < 1) {
+			// 	vars.bronzeGroup.children[2].rotation.x += 0.15;
+			// }
+			console.log(vars.bronzeGroup.children[2].rotation.x);
+		}
+
+		
+		
+		// let percent = (vars.animPartyPercent - 0.2) / 0.55;
+		// if(vars.animPartyPercent <= 0.5) {
+		// 	vars.bronzeGroup.children[2].rotation.x = 0 - vars.animPartyPercent;
+		// } else if(vars.animPartyPercent > 0.5 && vars.animPartyPercent < 0.85) {
+		// 	vars.bronzeGroup.children[2].rotation.x +=  vars.animPartyPercent;
+		// }
+		
+
+		// if (vars.animPartyPercent <= 0.33) {
+		// 	Scene.vars.plaquette.position.z = 45 + (75 * vars.animPartyPercent);
+		// 	Scene.vars.texte.position.z = 45 + (150 * vars.animPartyPercent);
+		// }
+
+		// if (vars.animPartyPercent >= 0.20 && vars.animPartyPercent <= 0.75) {
+		// 	let percent = (vars.animPartyPercent - 0.2) / 0.55;
+		// 	vars.socle1.position.x = 25 * percent;
+		// 	vars.socle2.position.x = -25 * percent;
+		// 	vars.logo.position.x = 45 + 50 * percent;
+		// 	vars.logo2.position.x = -45 - 50 * percent;
+		// } else if (vars.animPartyPercent < 0.20) {
+		// 	vars.socle1.position.x = 0;
+		// 	vars.socle2.position.x = 0;
+		// 	vars.logo.position.x = 45;
+		// 	vars.logo2.position.x = -45;
+		// }
+
+		// if (vars.animPartyPercent >= 0.40) {
+		// 	let percent = (vars.animPartyPercent - 0.4) / 0.6;
+		// 	vars.partyGroup.children[1].position.y = 50 * percent;
+		// } else if (vars.animPartyPercent < 0.70) {
+		// 	vars.partyGroup.children[1].position.y = 0;
+		// }
+	},
+	customBaseAnimation: () => {
 		let vars = Scene.vars;
 
-		if (vars.animSpeed === null) {
+		if (vars.animBaseSpeed === null) {
 			return;
 		}
 
-		vars.animPercent = vars.animPercent + vars.animSpeed;
+		vars.animBasePercent = vars.animBasePercent + vars.animBaseSpeed;
 
-		if (vars.animPercent < 0) {
-			vars.animPercent = 0;
+		if (vars.animBasePercent < 0) {
+			vars.animBasePercent = 0;
 			return;
 		}
-		if (vars.animPercent > 1) {
-			vars.animPercent = 1;
+		if (vars.animBasePercent > 1) {
+			vars.animBasePercent = 1;
 			return;
 		}
 
-		if (vars.animPercent <= 0.33) {
-			Scene.vars.plaquette.position.z = 45 + (75 * vars.animPercent);
-			Scene.vars.texte.position.z = 45 + (150 * vars.animPercent);
+		if (vars.animBasePercent <= 0.33) {
+			Scene.vars.plaquette.position.z = 45 + (75 * vars.animBasePercent);
+			Scene.vars.texte.position.z = 45 + (150 * vars.animBasePercent);
 		}
 
-		if (vars.animPercent >= 0.20 && vars.animPercent <= 0.75) {
-			let percent = (vars.animPercent - 0.2) / 0.55;
+		if (vars.animBasePercent >= 0.20 && vars.animBasePercent <= 0.75) {
+			let percent = (vars.animBasePercent - 0.2) / 0.55;
 			vars.socle1.position.x = 25 * percent;
 			vars.socle2.position.x = -25 * percent;
 			vars.logo.position.x = 45 + 50 * percent;
 			vars.logo2.position.x = -45 - 50 * percent;
-		} else if (vars.animPercent < 0.20) {
+		} else if (vars.animBasePercent < 0.20) {
 			vars.socle1.position.x = 0;
 			vars.socle2.position.x = 0;
 			vars.logo.position.x = 45;
 			vars.logo2.position.x = -45;
 		}
 
-		if (vars.animPercent >= 0.40) {
-			let percent = (vars.animPercent - 0.4) / 0.6;
+		if (vars.animBasePercent >= 0.40) {
+			let percent = (vars.animBasePercent - 0.4) / 0.6;
 			vars.statuette.position.y = 50 * percent;
-		} else if (vars.animPercent < 0.70) {
+		} else if (vars.animBasePercent < 0.70) {
 			vars.statuette.position.y = 0;
 		}
 	},
+	
 	loadFBX: (file, scale, position, rotation, color, namespace, callback) => {
 		let vars = Scene.vars;
 		let loader = new FBXLoader();
@@ -140,7 +270,7 @@ const Scene = {
 
 			callback();
 		});
-		
+
 	},
 	loadText: (text, scale, position, rotation, color, namespace, callback) => {
 		let loader = new THREE.FontLoader();
@@ -191,7 +321,7 @@ const Scene = {
 	},
 	onMouseMove: (event) => {
 		Scene.vars.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-		Scene.vars.mouse.y = -(event.clientY / window.innerHeight ) * 2 + 1;
+		Scene.vars.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 	},
 	init: () => {
 		let vars = Scene.vars;
@@ -210,7 +340,7 @@ const Scene = {
 		vars.renderer = new THREE.WebGLRenderer({ antialias: true });
 		vars.renderer.setPixelRatio(window.devicePixelRatio);
 		vars.renderer.setSize(window.innerWidth, window.innerHeight);
-		
+
 		vars.renderer.shadowMap.enabled = true;
 		vars.renderer.shadowMapSoft = true;
 
@@ -300,7 +430,7 @@ const Scene = {
 
 		// ajout de la sphère
 		let geometry = new THREE.SphereGeometry(1000, 32, 32);
-		let material = new THREE.MeshPhongMaterial({color: new THREE.Color(0xFFFFFF)});
+		let material = new THREE.MeshPhongMaterial({ color: new THREE.Color(0xFFFFFF) });
 		material.side = THREE.DoubleSide;
 		let sphere = new THREE.Mesh(geometry, material);
 		vars.scene.add(sphere);
@@ -318,67 +448,93 @@ const Scene = {
 				Scene.loadFBX("Socle_Partie1.FBX", 10, [0, 0, 0], [0, 0, 0], 0x1A1A1A, 'socle1', () => {
 					Scene.loadFBX("Socle_Partie2.FBX", 10, [0, 0, 0], [0, 0, 0], 0x1A1A1A, 'socle2', () => {
 						Scene.loadFBX("Plaquette.FBX", 10, [0, 4, 45], [0, 0, 0], 0xFFFFFF, 'plaquette', () => {
-							Scene.loadText(Scene.vars.text, 10, [0, 23, 52], [0, 0, 0], 0x1A1A1A, "texte", () => {
-								
-								let vars = Scene.vars;
-								
-								let gold = new THREE.Group();
-								gold.add(vars.socle1);
-								gold.add(vars.socle2);
-								gold.add(vars.statuette);
-								gold.add(vars.logo);
-								gold.add(vars.texte);
-								gold.add(vars.plaquette);
+							Scene.loadText(Scene.vars.text1, 10, [0, 23, 52], [0, 0, 0], 0x1A1A1A, "texte", () => {
+								Scene.loadText(Scene.vars.text2, 10, [0, 23, 52], [0, 0, 0], 0x1A1A1A, "texteParty", () => {
 
-								let logo2 = vars.logo.clone();
-								logo2.rotation.z = Math.PI;
-								logo2.position.x = -45;
-								vars.logo2 = logo2;
-								gold.add(logo2);
-								gold.position.z = -50;
-								gold.position.y = 10;
-								vars.scene.add(gold);
-								vars.goldGroup = gold;
 
-								let silver = gold.clone();
-								silver.position.set(-200, 10, 0);
-								silver.rotation.y = Math.PI / 4;
-								silver.children[2].traverse(node => {
-									if (node.isMesh) {
-										node.material = new THREE.MeshStandardMaterial({
-											color: new THREE.Color(0xC0C0C0),
-											metalness: .6,
-											roughness: .3
-										})
-									}
+									let vars = Scene.vars;
+
+									let gold = new THREE.Group();
+									gold.add(vars.socle1);
+									gold.add(vars.socle2);
+									gold.add(vars.statuette);
+									gold.add(vars.logo);
+									gold.add(vars.texte);
+									gold.add(vars.plaquette);
+
+
+									let logo2 = vars.logo.clone();
+									logo2.rotation.z = Math.PI;
+									logo2.position.x = -45;
+									vars.logo2 = logo2;
+									gold.add(logo2);
+									gold.position.z = -50;
+									gold.position.y = 10;
+									vars.scene.add(gold);
+									vars.goldGroup = gold;
+
+									let silver = gold.clone();
+									silver.position.set(-200, 10, 0);
+									silver.rotation.y = Math.PI / 4;
+									silver.children[2].traverse(node => {
+										if (node.isMesh) {
+											node.material = new THREE.MeshStandardMaterial({
+												color: new THREE.Color(0xC0C0C0),
+												metalness: .6,
+												roughness: .3
+											})
+										}
+									});
+									vars.scene.add(silver);
+									vars.silverGroup = silver;
+
+									let bronze = gold.clone();
+									bronze.position.set(200, 10, 0);
+									bronze.rotation.y = -Math.PI / 4;
+									bronze.children[2].traverse(node => {
+										if (node.isMesh) {
+											node.material = new THREE.MeshStandardMaterial({
+												color: new THREE.Color(0xCD7F32),
+												metalness: .6,
+												roughness: .3
+											})
+										}
+									});
+									vars.scene.add(bronze);
+									vars.bronzeGroup = bronze;
+
+									let party = gold.clone();
+									party.position.set(0, 10, 100);
+									party.scale.set(0.5, 0.5, 0.5);
+									party.add(vars.texteParty);
+									console.log(party.children);
+									party.remove(party.children[4]);
+									party.children[2].traverse(node => {
+										if (node.isMesh) {
+											node.material = new THREE.MeshStandardMaterial({
+												color: new THREE.Color(0xDB10F4),
+												metalness: .6,
+												roughness: .3
+											})
+										}
+									});
+									vars.scene.add(party);
+									vars.partyGroup = party;
+
+									// vars.scene.add(vars.jazz);
+
+									let elem = document.querySelector('#loading');
+									elem.parentNode.removeChild(elem);
 								});
-								vars.scene.add(silver);
-								vars.silverGroup = silver;
-
-								let bronze = gold.clone();
-								bronze.position.set(200, 10, 0);
-								bronze.rotation.y = -Math.PI / 4;
-								bronze.children[2].traverse(node => {
-									if (node.isMesh) {
-										node.material = new THREE.MeshStandardMaterial({
-											color: new THREE.Color(0xCD7F32),
-											metalness: .6,
-											roughness: .3
-										})
-									}
-								});
-								vars.scene.add(bronze);
-								vars.bronzeGroup = bronze;
-
-								let elem = document.querySelector('#loading');
-								elem.parentNode.removeChild(elem);
 							});
 						});
 					});
 				});
 			});
 		});
-		
+
+
+
 		// ajout des controles
 		vars.controls = new OrbitControls(vars.camera, vars.renderer.domElement);
 		vars.controls.minDistance = 300;
