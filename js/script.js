@@ -19,6 +19,9 @@ const Scene = {
 		animPartyStart: false,
 		animPartyMin: false,
 		animPartyMax: false,
+		animPartyColorR: null,
+		animPartyColorG: null,
+		animPartyColorB: null,
 		text1: "DAWIN",
 		text2: "PARTY"
 	},
@@ -29,7 +32,7 @@ const Scene = {
 		Scene.customBaseAnimation();
 		Scene.customPartyAnimation();
 
-		
+
 
 		if (Scene.vars.goldGroup !== undefined) {
 			let intersectsGold = Scene.vars.raycaster.intersectObjects(Scene.vars.goldGroup.children, true);
@@ -56,13 +59,18 @@ const Scene = {
 
 			if (intersectsSilver.length > 0) {
 				console.log("SILVER");
-			} 
+			}
 		}
 
 		if (Scene.vars.partyGroup !== undefined) {
 			let intersectsParty = Scene.vars.raycaster.intersectObjects(Scene.vars.partyGroup.children, true);
 
 			if (intersectsParty.length > 0) {
+
+				// Scene.vars.animPartyColorR = Math.floor(Math.random() * Math.floor(255));
+				// Scene.vars.animPartyColorG = Math.floor(Math.random() * Math.floor(255));
+				// Scene.vars.animPartyColorB = Math.floor(Math.random() * Math.floor(255));
+				Scene.vars.scene.children[4].intensity = .8;
 				Scene.vars.animPartyStart = true;
 
 				// Scene.vars.animPartySpeed = 0.15;
@@ -72,6 +80,11 @@ const Scene = {
 				Scene.vars.bronzeGroup.children[2].rotation.x = 0;
 				Scene.vars.silverGroup.children[2].rotation.x = 0;
 				Scene.vars.goldGroup.children[2].rotation.z = 0;
+				Scene.vars.scene.children[2].color.set(new THREE.Color(0xFFFFFF));
+				Scene.vars.scene.children[3].color.set(new THREE.Color(0xFFFFFF));
+				Scene.vars.scene.children[4].color.set(new THREE.Color(0xFFFFFF));
+				Scene.vars.scene.children[4].intensity = 0;
+				// Scene.vars.scene.children[4].color.set(new THREE.Color(0xFFFFFF));
 				Scene.vars.animPartyMin = false;
 				Scene.vars.animPartyMax = false;
 			}
@@ -105,54 +118,108 @@ const Scene = {
 		// 	return;
 		// }
 
+		// let color = '0x' + (function co(lor){   return (lor +=
+		// 	[0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F'][Math.floor(Math.random()*16)])
+		// 	&& (lor.length == 6) ?  lor : co(lor); })('');
+
+
+
+
 		if (vars.animPartyStart) {
-			if(!vars.animPartyMin && !vars.animPartyMax) {
+
+			// vars.scene.children[4].color.set(new THREE.Color(0xDB10F4));
+
+			if (!vars.animPartyMin && !vars.animPartyMax) {
 				// console.log("ETAT 1");
 				vars.bronzeGroup.children[2].rotation.x += speed;
 				vars.silverGroup.children[2].rotation.x -= speed;
 				vars.goldGroup.children[2].rotation.z -= speed;
-				if(vars.bronzeGroup.children[2].rotation.x >= angle && vars.silverGroup.children[2].rotation.x <= -angle && vars.goldGroup.children[2].rotation.z <= -angle) {
+				if (vars.bronzeGroup.children[2].rotation.x >= angle && vars.silverGroup.children[2].rotation.x <= -angle && vars.goldGroup.children[2].rotation.z <= -angle) {
+					let r1 = Math.round(Math.random());
+					let g1 = Math.round(Math.random());
+					let b1 = Math.round(Math.random());
+
+					let r2 = Math.round(Math.random());
+					let g2 = Math.round(Math.random());
+					let b2 = Math.round(Math.random());
+
+					let r3 = Math.round(Math.random());
+					let g3 = Math.round(Math.random());
+					let b3 = Math.round(Math.random());
+					vars.scene.children[2].color.set(new THREE.Color(r1, g1, b1));
+					vars.scene.children[3].color.set(new THREE.Color(r2, g2, b2));
+					vars.scene.children[4].color.set(new THREE.Color(r3, g3, b3));
 					vars.animPartyMax = true;
 				}
 
 
-			} else if(vars.animPartyMin && !vars.animPartyMax) {
+			} else if (vars.animPartyMin && !vars.animPartyMax) {
 				// console.log("ETAT 2 " + vars.animPartyMin + " / " + vars.animPartyMax);
 				vars.bronzeGroup.children[2].rotation.x += speed;
 				vars.silverGroup.children[2].rotation.x -= speed;
 				vars.goldGroup.children[2].rotation.z -= speed;
-				if(vars.bronzeGroup.children[2].rotation.x >= angle && vars.silverGroup.children[2].rotation.x <= -angle && vars.goldGroup.children[2].rotation.z <= -angle) {
+				if (vars.bronzeGroup.children[2].rotation.x >= angle && vars.silverGroup.children[2].rotation.x <= -angle && vars.goldGroup.children[2].rotation.z <= -angle) {
+					
+					let r1 = Math.round(Math.random());
+					let g1 = Math.round(Math.random());
+					let b1 = Math.round(Math.random());
+
+					let r2 = Math.round(Math.random());
+					let g2 = Math.round(Math.random());
+					let b2 = Math.round(Math.random());
+
+					let r3 = Math.round(Math.random());
+					let g3 = Math.round(Math.random());
+					let b3 = Math.round(Math.random());
+					vars.scene.children[2].color.set(new THREE.Color(r1, g1, b1));
+					vars.scene.children[3].color.set(new THREE.Color(r2, g2, b2));
+					vars.scene.children[4].color.set(new THREE.Color(r3, g3, b3));
 					vars.animPartyMax = true;
 					vars.animPartyMin = false;
 				}
-			} else if(!vars.animPartyMin && vars.animPartyMax) {
+			} else if (!vars.animPartyMin && vars.animPartyMax) {
 				// console.log("ETAT 3");
 				vars.bronzeGroup.children[2].rotation.x -= speed;
 				vars.silverGroup.children[2].rotation.x += speed;
 				vars.goldGroup.children[2].rotation.z += speed;
-				if(vars.bronzeGroup.children[2].rotation.x <= -angle && vars.silverGroup.children[2].rotation.x >= angle && vars.goldGroup.children[2].rotation.z >= angle) {
+				if (vars.bronzeGroup.children[2].rotation.x <= -angle && vars.silverGroup.children[2].rotation.x >= angle && vars.goldGroup.children[2].rotation.z >= angle) {
+					
+					let r1 = Math.round(Math.random());
+					let g1 = Math.round(Math.random());
+					let b1 = Math.round(Math.random());
+
+					let r2 = Math.round(Math.random());
+					let g2 = Math.round(Math.random());
+					let b2 = Math.round(Math.random());
+
+					let r3 = Math.round(Math.random());
+					let g3 = Math.round(Math.random());
+					let b3 = Math.round(Math.random());
+					vars.scene.children[2].color.set(new THREE.Color(r1, g1, b1));
+					vars.scene.children[3].color.set(new THREE.Color(r2, g2, b2));
+					vars.scene.children[4].color.set(new THREE.Color(r3, g3, b3));
 					vars.animPartyMax = false;
 					vars.animPartyMin = true;
 				}
 			}
-	
+
 			// if(vars.bronzeGroup.children[2].rotation.x <= 0 && vars.bronzeGroup.children[2].rotation.x > -1) {
 			// 	vars.bronzeGroup.children[2].rotation.x -= 0.15;
 			// } else if(vars.bronzeGroup.children[2].rotation.x > 0 && vars.bronzeGroup.children[2].rotation.x < 1) {
 			// 	vars.bronzeGroup.children[2].rotation.x += 0.15;
 			// }
-			console.log(vars.bronzeGroup.children[2].rotation.x);
+			// console.log(vars.bronzeGroup.children[2].rotation.x);
 		}
 
-		
-		
+
+
 		// let percent = (vars.animPartyPercent - 0.2) / 0.55;
 		// if(vars.animPartyPercent <= 0.5) {
 		// 	vars.bronzeGroup.children[2].rotation.x = 0 - vars.animPartyPercent;
 		// } else if(vars.animPartyPercent > 0.5 && vars.animPartyPercent < 0.85) {
 		// 	vars.bronzeGroup.children[2].rotation.x +=  vars.animPartyPercent;
 		// }
-		
+
 
 		// if (vars.animPartyPercent <= 0.33) {
 		// 	Scene.vars.plaquette.position.z = 45 + (75 * vars.animPartyPercent);
@@ -222,7 +289,7 @@ const Scene = {
 			vars.statuette.position.y = 0;
 		}
 	},
-	
+
 	loadFBX: (file, scale, position, rotation, color, namespace, callback) => {
 		let vars = Scene.vars;
 		let loader = new FBXLoader();
@@ -401,6 +468,20 @@ const Scene = {
 		// let helper3 = new THREE.DirectionalLightHelper(light3, 5);
 		// vars.scene.add(helper3);
 
+		let light4 = new THREE.DirectionalLight(0xFFFFFF, 0);
+		light4.position.set(0, 200, 400);
+		light4.castShadow = true;
+		light4.shadow.camera.left = -d;
+		light4.shadow.camera.right = d;
+		light4.shadow.camera.top = d;
+		light4.shadow.camera.bottom = -d;
+		light4.shadow.camera.far = 2000;
+		light4.shadow.mapSize.width = 4096;
+		light4.shadow.mapSize.height = 4096;
+		vars.scene.add(light4);
+		// let helper4 = new THREE.DirectionalLightHelper(light4, 5);
+		// vars.scene.add(helper4);
+
 		// ajout du sol
 		let mesh = new THREE.Mesh(
 			new THREE.PlaneBufferGeometry(2000, 2000),
@@ -553,6 +634,8 @@ const Scene = {
 		vars.container.appendChild(vars.stats.dom);
 
 		Scene.animate();
+
+		console.log(vars.scene.children);
 	}
 };
 
