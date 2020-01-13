@@ -22,8 +22,11 @@ const Scene = {
 		animPartyColorR: null,
 		animPartyColorG: null,
 		animPartyColorB: null,
+		partySound: null,
+		musicPlaying: false,
+		sceneLoaded: false,
 		text1: "DAWIN",
-		text2: "PARTY"
+		text2: "PARTY",
 	},
 	animate: () => {
 		requestAnimationFrame(Scene.animate);
@@ -65,13 +68,22 @@ const Scene = {
 		if (Scene.vars.partyGroup !== undefined) {
 			let intersectsParty = Scene.vars.raycaster.intersectObjects(Scene.vars.partyGroup.children, true);
 
+
+
 			if (intersectsParty.length > 0) {
 
 				// Scene.vars.animPartyColorR = Math.floor(Math.random() * Math.floor(255));
 				// Scene.vars.animPartyColorG = Math.floor(Math.random() * Math.floor(255));
 				// Scene.vars.animPartyColorB = Math.floor(Math.random() * Math.floor(255));
+				if (!Scene.vars.musicPlaying) {
+					Scene.vars.partySound.setVolume(1);
+					Scene.vars.partySound.play();
+					Scene.vars.musicPlaying = true;
+				}
+
 				Scene.vars.scene.children[4].intensity = .8;
 				Scene.vars.animPartyStart = true;
+				// Scene.vars.startMusic = true;
 
 				// Scene.vars.animPartySpeed = 0.15;
 				// console.log("Party");
@@ -87,6 +99,14 @@ const Scene = {
 				// Scene.vars.scene.children[4].color.set(new THREE.Color(0xFFFFFF));
 				Scene.vars.animPartyMin = false;
 				Scene.vars.animPartyMax = false;
+				Scene.vars.startMusic = false;
+				if (Scene.vars.sceneLoaded) {
+					Scene.vars.partySound.stop();
+					Scene.vars.musicPlaying = false;
+
+				}
+				// Scene.vars.audioLoader = null;
+				// Scene.vars.partySound.stop();
 			}
 		}
 
@@ -126,6 +146,11 @@ const Scene = {
 
 
 		if (vars.animPartyStart) {
+			// if (Scene.vars.startMusic) {
+
+			// 	Scene.vars.startMusic = false;
+			// }
+
 
 			// vars.scene.children[4].color.set(new THREE.Color(0xDB10F4));
 
@@ -159,7 +184,7 @@ const Scene = {
 				vars.silverGroup.children[2].rotation.x -= speed;
 				vars.goldGroup.children[2].rotation.z -= speed;
 				if (vars.bronzeGroup.children[2].rotation.x >= angle && vars.silverGroup.children[2].rotation.x <= -angle && vars.goldGroup.children[2].rotation.z <= -angle) {
-					
+
 					let r1 = Math.round(Math.random());
 					let g1 = Math.round(Math.random());
 					let b1 = Math.round(Math.random());
@@ -183,7 +208,7 @@ const Scene = {
 				vars.silverGroup.children[2].rotation.x += speed;
 				vars.goldGroup.children[2].rotation.z += speed;
 				if (vars.bronzeGroup.children[2].rotation.x <= -angle && vars.silverGroup.children[2].rotation.x >= angle && vars.goldGroup.children[2].rotation.z >= angle) {
-					
+
 					let r1 = Math.round(Math.random());
 					let g1 = Math.round(Math.random());
 					let b1 = Math.round(Math.random());
@@ -524,6 +549,29 @@ const Scene = {
 			Scene.vars.text = decodeURI(text);
 		}
 
+
+		var listener = new THREE.AudioListener();
+		Scene.vars.camera.add(listener);
+
+		// create a global audio source
+		Scene.vars.partySound = new THREE.Audio(listener);
+
+		// load a sound and set it as the Audio object's buffer
+		let audioLoader = new THREE.AudioLoader();
+		audioLoader.load('../audio/great_spirit.mp3', function (buffer) {
+			Scene.vars.partySound.setBuffer(buffer);
+			Scene.vars.partySound.setLoop(true);
+			Scene.vars.partySound.setVolume(0);
+			Scene.vars.partySound.play();
+		});
+
+
+		// Scene.vars.partySound.play();
+		// Scene.vars.scene.add(Scene.vars.audioLoader);
+		// console.log(Scene.vars.audioLoader);
+		// Scene.vars.audioLoader.stop();
+		// Scene.vars.audioLoader.currentTime = 0;
+
 		Scene.loadFBX("Logo_Feelity.FBX", 10, [45, 22, 0], [0, 0, 0], 0xFFFFFF, 'logo', () => {
 			Scene.loadFBX("Statuette.FBX", 10, [0, 0, 0], [0, 0, 0], 0xFFD700, 'statuette', () => {
 				Scene.loadFBX("Socle_Partie1.FBX", 10, [0, 0, 0], [0, 0, 0], 0x1A1A1A, 'socle1', () => {
@@ -606,6 +654,7 @@ const Scene = {
 
 									let elem = document.querySelector('#loading');
 									elem.parentNode.removeChild(elem);
+									Scene.vars.sceneLoaded = true;
 								});
 							});
 						});
