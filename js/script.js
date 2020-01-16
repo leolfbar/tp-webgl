@@ -19,9 +19,6 @@ const Scene = {
 		animPartyStart: false,
 		animPartyMin: false,
 		animPartyMax: false,
-		animPartyColorR: null,
-		animPartyColorG: null,
-		animPartyColorB: null,
 		partySound: null,
 		musicPlaying: false,
 		sceneLoaded: false,
@@ -46,15 +43,6 @@ const Scene = {
 				Scene.vars.animBaseSpeed = -0.05;
 			}
 
-			// let mouse = new THREE.Vector3(Scene.vars.mouse.x, Scene.vars.mouse.y, 0);
-			// mouse.unproject(Scene.vars.camera);
-
-			// let ray = new THREE.Raycaster(Scene.vars.camera.position, mouse.sub(Scene.vars.camera.position).normalize()); 
-			// let intersects = ray.intersectObjects(Scene.vars.goldGroup.children, true);
-			// if(intersects.length > 0) {
-			// 	var arrow = new THREE.ArrowHelper(ray.ray.direction, ray.ray.origin, 1000, 0xFF00000);
-			// 	Scene.vars.scene.add(arrow);
-			// }
 		}
 
 		if (Scene.vars.silverGroup !== undefined) {
@@ -72,9 +60,6 @@ const Scene = {
 
 			if (intersectsParty.length > 0) {
 
-				// Scene.vars.animPartyColorR = Math.floor(Math.random() * Math.floor(255));
-				// Scene.vars.animPartyColorG = Math.floor(Math.random() * Math.floor(255));
-				// Scene.vars.animPartyColorB = Math.floor(Math.random() * Math.floor(255));
 				if (!Scene.vars.musicPlaying) {
 					Scene.vars.partySound.setVolume(1);
 					Scene.vars.partySound.play();
@@ -83,10 +68,7 @@ const Scene = {
 
 				Scene.vars.scene.children[4].intensity = .8;
 				Scene.vars.animPartyStart = true;
-				// Scene.vars.startMusic = true;
-
-				// Scene.vars.animPartySpeed = 0.15;
-				// console.log("Party");
+		
 			} else {
 				Scene.vars.animPartyStart = false;
 				Scene.vars.bronzeGroup.children[2].rotation.x = 0;
@@ -96,7 +78,6 @@ const Scene = {
 				Scene.vars.scene.children[3].color.set(new THREE.Color(0xFFFFFF));
 				Scene.vars.scene.children[4].color.set(new THREE.Color(0xFFFFFF));
 				Scene.vars.scene.children[4].intensity = 0;
-				// Scene.vars.scene.children[4].color.set(new THREE.Color(0xFFFFFF));
 				Scene.vars.animPartyMin = false;
 				Scene.vars.animPartyMax = false;
 				Scene.vars.startMusic = false;
@@ -105,8 +86,7 @@ const Scene = {
 					Scene.vars.musicPlaying = false;
 
 				}
-				// Scene.vars.audioLoader = null;
-				// Scene.vars.partySound.stop();
+				
 			}
 		}
 
@@ -127,35 +107,10 @@ const Scene = {
 			return;
 		}
 
-		// vars.animPartyPercent = vars.animPartyPercent + vars.animPartySpeed;
-
-		// if (vars.animPartyPercent < 0) {
-		// 	vars.animPartyPercent = 0;
-		// 	return;
-		// }
-		// if (vars.animPartyPercent > 1) {
-		// 	vars.animPartyPercent = 1;
-		// 	return;
-		// }
-
-		// let color = '0x' + (function co(lor){   return (lor +=
-		// 	[0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F'][Math.floor(Math.random()*16)])
-		// 	&& (lor.length == 6) ?  lor : co(lor); })('');
-
-
-
-
 		if (vars.animPartyStart) {
-			// if (Scene.vars.startMusic) {
-
-			// 	Scene.vars.startMusic = false;
-			// }
-
-
-			// vars.scene.children[4].color.set(new THREE.Color(0xDB10F4));
+			
 
 			if (!vars.animPartyMin && !vars.animPartyMax) {
-				// console.log("ETAT 1");
 				vars.bronzeGroup.children[2].rotation.x += speed;
 				vars.silverGroup.children[2].rotation.x -= speed;
 				vars.goldGroup.children[2].rotation.z -= speed;
@@ -179,7 +134,6 @@ const Scene = {
 
 
 			} else if (vars.animPartyMin && !vars.animPartyMax) {
-				// console.log("ETAT 2 " + vars.animPartyMin + " / " + vars.animPartyMax);
 				vars.bronzeGroup.children[2].rotation.x += speed;
 				vars.silverGroup.children[2].rotation.x -= speed;
 				vars.goldGroup.children[2].rotation.z -= speed;
@@ -203,7 +157,6 @@ const Scene = {
 					vars.animPartyMin = false;
 				}
 			} else if (!vars.animPartyMin && vars.animPartyMax) {
-				// console.log("ETAT 3");
 				vars.bronzeGroup.children[2].rotation.x -= speed;
 				vars.silverGroup.children[2].rotation.x += speed;
 				vars.goldGroup.children[2].rotation.z += speed;
@@ -228,48 +181,9 @@ const Scene = {
 				}
 			}
 
-			// if(vars.bronzeGroup.children[2].rotation.x <= 0 && vars.bronzeGroup.children[2].rotation.x > -1) {
-			// 	vars.bronzeGroup.children[2].rotation.x -= 0.15;
-			// } else if(vars.bronzeGroup.children[2].rotation.x > 0 && vars.bronzeGroup.children[2].rotation.x < 1) {
-			// 	vars.bronzeGroup.children[2].rotation.x += 0.15;
-			// }
-			// console.log(vars.bronzeGroup.children[2].rotation.x);
+			
 		}
 
-
-
-		// let percent = (vars.animPartyPercent - 0.2) / 0.55;
-		// if(vars.animPartyPercent <= 0.5) {
-		// 	vars.bronzeGroup.children[2].rotation.x = 0 - vars.animPartyPercent;
-		// } else if(vars.animPartyPercent > 0.5 && vars.animPartyPercent < 0.85) {
-		// 	vars.bronzeGroup.children[2].rotation.x +=  vars.animPartyPercent;
-		// }
-
-
-		// if (vars.animPartyPercent <= 0.33) {
-		// 	Scene.vars.plaquette.position.z = 45 + (75 * vars.animPartyPercent);
-		// 	Scene.vars.texte.position.z = 45 + (150 * vars.animPartyPercent);
-		// }
-
-		// if (vars.animPartyPercent >= 0.20 && vars.animPartyPercent <= 0.75) {
-		// 	let percent = (vars.animPartyPercent - 0.2) / 0.55;
-		// 	vars.socle1.position.x = 25 * percent;
-		// 	vars.socle2.position.x = -25 * percent;
-		// 	vars.logo.position.x = 45 + 50 * percent;
-		// 	vars.logo2.position.x = -45 - 50 * percent;
-		// } else if (vars.animPartyPercent < 0.20) {
-		// 	vars.socle1.position.x = 0;
-		// 	vars.socle2.position.x = 0;
-		// 	vars.logo.position.x = 45;
-		// 	vars.logo2.position.x = -45;
-		// }
-
-		// if (vars.animPartyPercent >= 0.40) {
-		// 	let percent = (vars.animPartyPercent - 0.4) / 0.6;
-		// 	vars.partyGroup.children[1].position.y = 50 * percent;
-		// } else if (vars.animPartyPercent < 0.70) {
-		// 	vars.partyGroup.children[1].position.y = 0;
-		// }
 	},
 	customBaseAnimation: () => {
 		let vars = Scene.vars;
@@ -566,12 +480,6 @@ const Scene = {
 		});
 
 
-		// Scene.vars.partySound.play();
-		// Scene.vars.scene.add(Scene.vars.audioLoader);
-		// console.log(Scene.vars.audioLoader);
-		// Scene.vars.audioLoader.stop();
-		// Scene.vars.audioLoader.currentTime = 0;
-
 		Scene.loadFBX("Logo_Feelity.FBX", 10, [45, 22, 0], [0, 0, 0], 0xFFFFFF, 'logo', () => {
 			Scene.loadFBX("Statuette.FBX", 10, [0, 0, 0], [0, 0, 0], 0xFFD700, 'statuette', () => {
 				Scene.loadFBX("Socle_Partie1.FBX", 10, [0, 0, 0], [0, 0, 0], 0x1A1A1A, 'socle1', () => {
@@ -662,7 +570,6 @@ const Scene = {
 				});
 			});
 		});
-
 
 
 		// ajout des controles
